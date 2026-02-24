@@ -1,0 +1,26 @@
+.login-page {
+    background: var(--background-primary-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.login-page__container {
+    padding: 48px 32px;
+    border: 4px solid white;
+    border-radius: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: linear-gradient(180deg, var(--background-primary-color), white);
+    box-shadow: 0 24px 32px 0 rgba(0, 0, 0, 0.04);
+}
+
+.login-page__logo {
+    align-self: center;
+    border: 3px solid white;
+    border-radius: 50%;
+    padding: 6px;
+    background: linear-gradient(180deg, var(--background-primary-color), white);
+}
