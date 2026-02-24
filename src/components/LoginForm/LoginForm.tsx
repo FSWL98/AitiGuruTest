@@ -1,12 +1,34 @@
 import { type FC } from 'react';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input, Divider } from 'antd';
+import { Button, Checkbox, Form, Input, Divider, notification } from 'antd';
+import { useAppDispatch, useAppSelector } from '../../store/index';
+import { loginUser } from '../../store/slices/authSlice';
+
+type FormValues = {
+    username: string;
+    password: string;
+    remember: boolean;
+}
 
 const LoginForm: FC = () => {
     const [form] = Form.useForm();
+    const dispatch = useAppDispatch();
+    const { isLoading } = useAppSelector((state) => state.auth);
+    const [api, contextHolder] = notification.useNotification();
 
-    const onFinish = (values: string | number | boolean) => {
-        console.log(values);
+    const onFinish = async (values: FormValues) => {
+        const { username, password, remember } = values;
+        try {
+            await dispatch(loginUser({
+              credentials: { username, password },
+              rememberMe: remember,
+            })).unwrap();
+          } catch (err) {
+            api.error({
+              message: 'Ошибка авторизации',
+              description: err as string,
+            });
+          }
       };
 
     return (
@@ -15,6 +37,7 @@ const LoginForm: FC = () => {
             name='login-form'
             onFinish={onFinish}
         >
+            {contextHolder}
             <Form.Item
                 name="username"
                 label={<strong>Логин</strong>}
@@ -37,7 +60,7 @@ const LoginForm: FC = () => {
                 </Form.Item>
             </Form.Item>
             <Form.Item className='lalalal'>
-                <Button block type="primary" htmlType="submit">
+                <Button block type="primary" htmlType="submit" loading={isLoading}>
                     Войти
                 </Button>
                 <Divider>
