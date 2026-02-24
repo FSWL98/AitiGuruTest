@@ -1,12 +1,18 @@
 import './App.css'
-import LoginPage from './pages/LoginPage/LoginPage'
+import ProductsPage from './pages/ProductsPage/ProductsPage'
+import { ConfigProvider } from 'antd'
 
 function App() {
 
   return (
-    <>
-      <LoginPage />
-    </>
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: '#242edb'
+        }
+      }}>
+      <ProductsPage />
+    </ConfigProvider>
   )
 }
 
