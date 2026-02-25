@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { type AuthState, type LoginCredentials, type AuthResponse } from '../../types/auth';
 
 const loadState = (): Partial<AuthState> => {
@@ -40,9 +40,13 @@ const initialState: AuthState = {
   ...loadState(),
 };
 
-export const loginUser = createAsyncThunk(
+export const loginUser = createAsyncThunk<
+  { user: AuthResponse; rememberMe: boolean },
+  { credentials: LoginCredentials; rememberMe: boolean },
+  { rejectValue: string }
+>(
   'auth/login',
-  async ({ credentials, rememberMe }: { credentials: LoginCredentials; rememberMe: boolean }, { rejectWithValue }) => {
+  async ({ credentials, rememberMe }, { rejectWithValue }) => {
     try {
       const response = await fetch('https://dummyjson.com/auth/login', {
         method: 'POST',
@@ -51,16 +55,17 @@ export const loginUser = createAsyncThunk(
           ...credentials,
         }),
       });
-      
-      const data = await response.json();
-      
+
+      const data: AuthResponse = await response.json();
+
       if (!response.ok) {
-        return rejectWithValue(data.message || 'Ошибка авторизации');
+        return rejectWithValue('Ошибка авторизации');
       }
-      
+
       return { user: data, rememberMe };
     } catch (error) {
       console.log(error);
+      return rejectWithValue('Ошибка авторизации');
     }
   }
 );
@@ -88,19 +93,19 @@ const authSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(loginUser.fulfilled, (state, action: PayloadAction<{ user: AuthResponse; rememberMe: boolean }>) => {
+      .addCase(loginUser.fulfilled, (state, action) => {
         const { user, rememberMe } = action.payload;
-        
+
         state.isLoading = false;
         state.user = user;
         state.token = user.accessToken;
         state.rememberMe = rememberMe;
         state.error = null;
-        
+
         const storage = rememberMe ? localStorage : sessionStorage;
         storage.setItem('auth_token', user.accessToken);
         storage.setItem('auth_user', JSON.stringify(user));
-        
+
         if (!rememberMe) {
           localStorage.removeItem('auth_token');
           localStorage.removeItem('auth_user');
@@ -108,7 +113,7 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload as string;
+        state.error = action.payload ?? 'Ошибка авторизации';
       });
   },
 });
