@@ -1,6 +1,7 @@
-import { type FC } from 'react';
+import { useEffect, type FC } from 'react';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input, Divider, notification } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/index';
 import { loginUser } from '../../store/slices/authSlice';
 
@@ -13,8 +14,15 @@ type FormValues = {
 const LoginForm: FC = () => {
     const [form] = Form.useForm();
     const dispatch = useAppDispatch();
-    const { isLoading } = useAppSelector((state) => state.auth);
+    const navigate = useNavigate();
+    const { isLoading, token } = useAppSelector((state) => state.auth);
     const [api, contextHolder] = notification.useNotification();
+
+    useEffect(() => {
+        if (token) {
+          navigate('/products', { replace: true });
+        }
+    }, [token, navigate]);
 
     const onFinish = async (values: FormValues) => {
         const { username, password, remember } = values;

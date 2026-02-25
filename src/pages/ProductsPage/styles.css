@@ -1,6 +1,11 @@
 .products-page {
     background: var(--background-primary-color);
     padding-top: 32px;
+    height: calc(100vh - 32px);
+    max-height: calc(100vh - 32px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .products-page__container {
@@ -10,8 +15,13 @@
     width: calc(100% - 48px);
 }
 
+.products-page__container:last-of-type {
+    flex-grow: 1;
+    margin-bottom: 0;
+}
+
 .products-page__table {
-    max-height: 60vh;
+    flex: 1px 1 1;
     padding-right: 8px;
     overflow-y: overlay;
 }
@@ -46,4 +56,8 @@
 
 .item-title-card .ant-card-meta-title {
     margin: 0 !important;
+}
+
+.item-title-card .ant-card-meta-description {
+    text-transform: capitalize;
 }

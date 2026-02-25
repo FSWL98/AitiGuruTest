@@ -1,22 +1,22 @@
 import { Provider } from 'react-redux';
 import './App.css'
-import LoginPage from './pages/LoginPage/LoginPage'
-import ProductsPage from './pages/ProductsPage/ProductsPage'
 import { ConfigProvider } from 'antd'
+import { RouterProvider } from 'react-router-dom';
 import { store } from './store';
+import { router } from './router';
 
 function App() {
 
   return (
     <Provider store={store}>
       <ConfigProvider
-      theme={{
-        token: {
-          colorPrimary: '#242edb'
-        }
-      }}>
-      <LoginPage />
-    </ConfigProvider>
+        theme={{
+          token: {
+            colorPrimary: '#242edb'
+          }
+        }}>
+          <RouterProvider router={router} />
+      </ConfigProvider>
     </Provider>
   )
 }
